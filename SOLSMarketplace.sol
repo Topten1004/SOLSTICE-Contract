@@ -40,6 +40,8 @@ contract SOLSMarketplace is Ownable{
 
     event NFTListed(uint256) ;
 
+    error PriceLow() ;
+
     constructor ( address _SOLT, address _LEGEN, address _RARE, address _BID, address _SOLN ) {
         SOLT = SOLSTOKEN(_SOLT);
         LEGEN = Legendary(_LEGEN) ;
@@ -93,8 +95,9 @@ contract SOLSMarketplace is Ownable{
         string memory description,
         string memory uri
     ) external isValidProductId(product_id) isValidUnitId(_legen_param.product_unit) isValidUnitId(_legen_param.ticket_unit) onlyOwner  {
-        require(_legen_param.product_price > 0, "Product price is too low");
-        require(_legen_param.ticket_price > 0, "Ticket price is too low");
+        if(_legen_param.product_price < 0) revert PriceLow();
+        if(_legen_param.ticket_price < 0) revert TicketLow();
+        
         require(_legen_param.ticket_available > 0, "# of Tickets available should be bigger than 0") ;
         require(_legen_param.royalty >= 1, "Royalty should be bigger than 1") ;
 
