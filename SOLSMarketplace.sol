@@ -41,7 +41,8 @@ contract SOLSMarketplace is Ownable{
     event NFTListed(uint256) ;
 
     error PriceLow() ;
-
+    error TicketLow() ;
+    error RolaltyError() ;
 
     constructor ( address _SOLT, address _LEGEN, address _RARE, address _BID, address _SOLN ) {
         SOLT = SOLSTOKEN(_SOLT);
@@ -97,10 +98,10 @@ contract SOLSMarketplace is Ownable{
         string memory uri
     ) external isValidProductId(product_id) isValidUnitId(_legen_param.product_unit) isValidUnitId(_legen_param.ticket_unit) onlyOwner  {
         if(_legen_param.product_price < 0) revert PriceLow();
+        if(_legen_param.ticket_price < 0) revert TicketLow();
+        if(_legen_param.royalty <= 1 ) revert RolaltyError() ;
 
-        require(_legen_param.ticket_price > 0, "Ticket price is too low");
         require(_legen_param.ticket_available > 0, "# of Tickets available should be bigger than 0") ;
-        require(_legen_param.royalty >= 1, "Royalty should be bigger than 1") ;
 
         uint256 new_nft_id ;
         if(_legen_param.resell) new_nft_id = mintNFT(creator, _legen_param.ticket_available , product_id , 1, name, description, uri) ;
