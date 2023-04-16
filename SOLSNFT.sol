@@ -12,8 +12,12 @@ contract SOLSNFT is ERC1155 {
       
     }
 
+    error DontAttempt();
+
     function setSolsMarketplaceToNFT(address solsMarketplace) external {
-        require(_solsMarketplace ==  address(0), "SOLSNFT Contract: Don't attemp to change marketplace address!") ;
+        if(_solsMarketplace == address(0)) {
+            revert DontAttempt();
+        }
 
         _solsMarketplace = solsMarketplace ;
     }
